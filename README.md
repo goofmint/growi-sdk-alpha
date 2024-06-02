@@ -39,16 +39,27 @@ const pages = await page.children();
 pages[0] instanceof growi.Page; // true
 ```
 
-## Class
+### Update page contents
 
-### Page
+```javascript
+page.body = 'New contents';
+await page.save();
+```
 
-#### Properties
+### Get contents of a page
 
+```javascript
+const contents = await page.contents();
+```
 
+### Remove a page
+
+```javascript
+await page.remove();
+```
 
 ## License
 
-
+MIT
 
 
