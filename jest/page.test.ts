@@ -55,7 +55,7 @@ describe('Page', () => {
     const page = await growi.root();
     const name = `Test page ${new Date().toISOString()}`;
     try {
-      const newPage = await page.page({ name });
+      const newPage = await page.create({ name });
       expect(newPage.path).toBe(`/${name}`);
       expect(newPage.id).toBeDefined();
       expect(newPage.revision).toBeDefined();
@@ -72,7 +72,7 @@ describe('Page', () => {
     const page = await growi.root();
     const name = `Test page ${new Date().toISOString()}`;
     try {
-      const newPage = await page.page({ name });
+      const newPage = await page.create({ name });
       expect(newPage.path).toBe(`/${name}`);
       expect(newPage.id).toBeDefined();
       expect(newPage.revision).toBeDefined();
@@ -88,10 +88,10 @@ describe('Page', () => {
   test('Update page', async () => {
     const page = await growi.root();
     const name = `Test page ${new Date().toISOString()}`;
-    const newPage = await page.page({ name });
+    const newPage = await page.create({ name, grant: growi.Page.Grant.public });
     try {
       const body = 'This is a test page.';
-      newPage.body = body;
+      newPage.contents(body);
       await newPage.save();
       expect(newPage.body).toBe(body);
     } catch (e) {
