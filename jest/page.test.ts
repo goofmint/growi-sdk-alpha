@@ -1,9 +1,9 @@
 import { AxiosError } from "axios";
-import { Growi } from "../src";
+import { GROWI } from "../src";
 import config from './config.json';
 import {describe, expect, test} from '@jest/globals';
 
-const growi = new Growi(config);
+const growi = new GROWI(config);
 
 describe('Page', () => {
   test('Get a root page', async () => {

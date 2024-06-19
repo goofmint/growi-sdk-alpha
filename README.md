@@ -1,6 +1,6 @@
 # Growi node.js SDK
 
-This is a SDK for [Growi](https://growi.org/) written in node.js.
+This is a SDK for [GROWI](https://growi.org/) written in node.js.
 
 ## Installation
 
@@ -13,16 +13,16 @@ $ npm install growi-js
 ### Create a client
 
 ```javascript
-import { Growi } from 'growi-js';
-const growi = new Growi({apiToken: 'YOUR_API_TOKEN'});
+import { GROWI } from 'growi-js';
+const growi = new GROWI({apiToken: 'YOUR_API_TOKEN'});
 ```
 
 Initialize parameters are as follows:
 
 | Parameter | Description |
 | --------- | ----------- |
-| `apiToken` | API token for Growi. You can get it from the setting page of Growi. |
-| `url` | URL of Growi. Default is `http://localhost:3000`. |
+| `apiToken` | API token for GROWI. You can get it from the setting page of GROWI. |
+| `url` | URL of GROWI. Default is `http://localhost:3000`. |
 | `path` | Endpoint path of Growi API. Default is `/`. |
 
 ### Get root page

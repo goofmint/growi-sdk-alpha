@@ -5,7 +5,7 @@ import { PagePamams } from "./types/page";
 import { User } from "./user";
 import { Revision } from "./revision";
 
-class Growi {
+class GROWI {
 	private _apiToken?: string;
 	private _url: string;
 	private _path: string;
@@ -103,4 +103,4 @@ class Growi {
 	}
 }
 
-export { Growi, Page };
+export { GROWI, Page };
