@@ -5,7 +5,7 @@ This is a SDK for [Growi](https://growi.org/) written in node.js.
 ## Installation
 
 ```bash
-$ npm install growi
+$ npm install growi-js
 ```
 
 ## Usage
@@ -13,7 +13,7 @@ $ npm install growi
 ### Create a client
 
 ```javascript
-import { Growi } from 'growi';
+import { Growi } from 'growi-js';
 const growi = new Growi({apiToken: 'YOUR_API_TOKEN'});
 ```
 
@@ -23,7 +23,7 @@ Initialize parameters are as follows:
 | --------- | ----------- |
 | `apiToken` | API token for Growi. You can get it from the setting page of Growi. |
 | `url` | URL of Growi. Default is `http://localhost:3000`. |
-| `path` | Endpoint path of Growi API. Default is `/_api/v3`. |
+| `path` | Endpoint path of Growi API. Default is `/`. |
 
 ### Get root page
 
@@ -42,7 +42,7 @@ pages[0] instanceof growi.Page; // true
 ### Update page contents
 
 ```javascript
-page.body = 'New contents';
+page.contents('New contents');
 await page.save();
 ```
 
@@ -50,6 +50,12 @@ await page.save();
 
 ```javascript
 const contents = await page.contents();
+```
+
+### Create a page
+
+```javascript
+const newPage = await page.create({name: 'New page'});
 ```
 
 ### Remove a page

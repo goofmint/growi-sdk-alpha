@@ -4,9 +4,19 @@ import { PagePamams, createPageParams, removePageParams, removePageRequest, remo
 import { RevisionParams } from "./types/revision";
 import { User } from "./user";
 
+const Grant = {
+	public: 1,
+	restricted: 2,
+	specified: 3,
+	owner: 4,
+	userGroup: 5,
+} as const;
+
 class Page {
 	static client: Growi;
 	static Revision = Revision;
+	static Grant = Grant;
+
 	id?: string;
 	path?: string;
 	parent?: Page;
@@ -195,7 +205,11 @@ class Page {
 		return true;
 	}
 
-	async contents(): Promise<string> {
+	async contents(contents?: string): Promise<string> {
+		if (contents) {
+			this.body = contents;
+			return contents;
+		}
 		if (this.revision && this.revision.body) return this.revision.body;
 		if (!this.id) throw new Error('Page ID is not defined');
 		await this.get();
@@ -207,11 +221,11 @@ class Page {
 	 * @param params createPageParams
 	 * @returns Page
 	 */
-	async page(params: createPageParams): Promise<Page> {
+	async create(params: createPageParams): Promise<Page> {
 		const path = this.parent ? `${this.path}/${params.name}` : `/${params.name}`;
 		const { page, revision, tags } = await Page.client.request('POST', '/_api/v3/page', {}, {
 			path,
-			grant: params.grant || 1,
+			grant: params.grant || PageGrant.public,
 			body: params.body || '',
 		}) as {
 			page: PagePamams,

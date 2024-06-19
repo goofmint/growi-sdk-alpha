@@ -23,7 +23,7 @@ export interface PagePamams {
 
 export interface createPageParams {
 	name: string;
-	grant?: number;
+	grant?: Page.Grant;
 	body?: string;
 }
 
