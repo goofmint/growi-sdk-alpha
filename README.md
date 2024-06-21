@@ -5,7 +5,7 @@ This is a SDK for [GROWI](https://growi.org/) written in node.js.
 ## Installation
 
 ```bash
-$ npm install growi-js
+$ npm install @goofmint/growi-js
 ```
 
 ## Usage
@@ -13,7 +13,7 @@ $ npm install growi-js
 ### Create a client
 
 ```javascript
-import { GROWI } from 'growi-js';
+import { GROWI } from '@goofmint/growi-js';
 const growi = new GROWI({apiToken: 'YOUR_API_TOKEN'});
 ```
 
