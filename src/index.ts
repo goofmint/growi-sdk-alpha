@@ -45,6 +45,10 @@ class GROWI {
 		return {...meta, pages: data.map((d) => new Page(d.data))};
 	}
 
+	async searchByTag(tag: string): Promise<SearchResult> {
+		return this.search({ q: `tag:${tag}` });
+	}
+	
 	async request(
 		method: HttpMethod,
 		path: string,

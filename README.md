@@ -125,6 +125,16 @@ result.took // time taken for search
 result.hitsCount // number of hits
 ```
 
+### Search by tag
+
+```javascript
+const result = await growi.searchByTag('tag');
+result.pages[0] instanceof growi.Page; // true
+result.total // total number of pages
+result.took // time taken for search
+result.hitsCount // number of hits
+```
+
 ## License
 
 MIT
