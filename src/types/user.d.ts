@@ -10,4 +10,9 @@ export interface UserParams {
 	email: string;
 	createdAt: string;
 	imageUrlCached: string;
+	readOnly?: boolean
+	isInvitationEmailSended?: boolean
+	isQuestionnaireEnabled?: boolean
+	updatedAt?: string
+	__v?: number
 }

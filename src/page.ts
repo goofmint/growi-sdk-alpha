@@ -1,10 +1,13 @@
-import { Growi } from ".";
+import { GROWI } from ".";
 import { Revision } from "./revision";
-import { PagePamams, createPageParams, removePageParams, removePageRequest, removePageResponse, updatePageParams, updatePageRequest } from "./types/page";
+import { GetPageCommentsResponse } from "./types/comment";
+import { PagePamams, PageTagResponse, createPageParams, removePageParams, removePageRequest, removePageResponse, updatePageParams, updatePageRequest } from "./types/page";
 import { RevisionParams } from "./types/revision";
 import { User } from "./user";
+import { Comment } from "./comment";
+import { UpdatePageTagResponse } from "./types/tag";
 
-const Grant = {
+const PageGrant = {
 	public: 1,
 	restricted: 2,
 	specified: 3,
@@ -13,9 +16,9 @@ const Grant = {
 } as const;
 
 class Page {
-	static client: Growi;
+	static client: GROWI;
 	static Revision = Revision;
-	static Grant = Grant;
+	static Grant = PageGrant;
 
 	id?: string;
 	path?: string;
@@ -38,8 +41,10 @@ class Page {
 	creator?: User;
 	wip?: boolean;
 	ttlTimestamp?: Date;
-	tags?: string[];
+	_tags?: string[];
+	_comments?: Comment[];
 	body?: string;
+	seenUserCount?: number;
 
 	/**
 	 * Constructor
@@ -133,8 +138,9 @@ class Page {
 				break;
 			case 'tags':
 				if (Array.isArray(value)) {
-					this.tags = value as string[];
+					this._tags = value as string[];
 				}
+				break;
 			case 'latestRevisionBodyLength':
 				this.latestRevisionBodyLength = value as number;
 				break;
@@ -170,8 +176,11 @@ class Page {
 			case 'body':
 				this.body = value as string;
 				break;
+			case 'seenUserCount':
+				this.seenUserCount = value as number;
+				break;
 			default:
-				throw new Error(`Unknown key: ${key}`);
+				throw new Error(`Unknown key in page: ${key}`);
 		}
 		return this;
 	}
@@ -281,6 +290,56 @@ class Page {
 		if (params?.isRecursively) body.isRecursively = true;
 		const res = await Page.client.request('POST', '/_api/v3/pages/delete', {}, body) as removePageResponse;
 		return (res.paths.includes(this.path!));
+	}
+
+	async tags(): Promise<string[]> {
+		if (!this.id) throw new Error('Page ID is not defined');
+		if (this._tags && this._tags.length > 0) return this._tags;
+		const params = {
+			pageId: this.id,
+		};
+		const res = await Page.client.request('GET', '/_api/pages.getPageTag', params) as PageTagResponse;
+		this._tags = res.tags.map(tag => tag);
+		return this._tags;
+	}
+
+	async updateTag(action: string, text: string): Promise<string[]> {
+		if (!this.id) throw new Error('Page ID is not defined');
+		if (!this._tags) await this.tags();
+		const params = {
+			pageId: this.id,
+			revisionId: this.revision?.id,
+			tags: this._tags || [],
+		};
+		if (action === 'add') {
+			params.tags.push(text);
+		} else if (action === 'remove') {
+			params.tags = params.tags.filter(tag => tag !== text);
+		} else {
+			throw new Error(`Unknown tag action: ${action}`);
+		}
+		const res = await Page.client.request('POST', '/_api/tags.update', {}, params) as UpdatePageTagResponse;
+		this._tags = res.tags.map(tag => tag);
+		return this._tags;
+	}
+
+	async addTag(text: string): Promise<string[]> {
+		return this.updateTag('add', text);
+	}
+
+	async removeTag(text: string): Promise<string[]> {
+		return this.updateTag('remove', text);
+	}
+
+	async comments(): Promise<Comment[]> {
+		if (!this.id) throw new Error('Page ID is not defined');
+		if (this._comments && this._comments.length > 0) return this._comments;
+		this._comments = await Comment.all(this);
+		return this._comments;
+	}
+
+	comment(): Comment {
+		return new Comment({ page: this });
 	}
 }
 

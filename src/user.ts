@@ -1,8 +1,8 @@
-import { Growi } from ".";
+import { GROWI } from ".";
 import { UserParams } from "./types/user";
 
 class User {
-	static client: Growi;
+	static client: GROWI;
 
 	id?: string;
 	isGravatarEnabled?: boolean;
@@ -14,7 +14,9 @@ class User {
 	username?: string;
 	email?: string;
 	createdAt?: Date;
+	updatedAt?: Date;
 	imageUrlCached?: string;
+	isQuestionnaireEnabled?: boolean;
 
 	/**
 	 * Constructor
@@ -78,11 +80,17 @@ class User {
 			case 'createdAt':
 				this.createdAt = new Date(value as string);
 				break;
+			case 'updatedAt':
+				this.updatedAt = new Date(value as string);
+				break;
 			case 'imageUrlCached':
 				this.imageUrlCached = value as string;
 				break;
+			case 'isQuestionnaireEnabled':
+				this.isQuestionnaireEnabled = value as boolean;
+				break;
 			default:
-				throw new Error(`Unknown key: ${key}`);
+				throw new Error(`Unknown key in user: ${key} ${value}`);
 		}
 		return this;
 	}

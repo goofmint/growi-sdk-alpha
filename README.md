@@ -64,6 +64,67 @@ const newPage = await page.create({name: 'New page'});
 await page.remove();
 ```
 
+## Tag
+
+### Get tags of a page
+
+```javascript
+const tags = await page.tags();
+```
+
+### Add a tag to a page
+
+```javascript
+await page.addTag('tag');
+```
+
+### Remove a tag from a page
+
+```javascript
+await page.removeTag('tag');
+```
+
+## Comment
+
+### Get comments of a page
+
+```javascript
+const comments = await page.comments();
+```
+
+### Add a comment to a page
+
+```javascript
+const comment = page.comment();
+comment.set('comment', 'New comment');
+await comment.save();
+```
+
+### Update a comment
+
+```javascript
+comment.set('comment', 'Updated comment');
+await comment.save();
+```
+
+### Remove a comment
+
+```javascript
+await comment.remove();
+```
+
+## Search
+
+### Search pages
+
+```javascript
+const result = await growi.search({q: 'keyword'});
+result.pages[0] instanceof growi.Page; // true
+result.total // total number of pages
+result.took // time taken for search
+result.hitsCount // number of hits
+```
+
 ## License
 
 MIT

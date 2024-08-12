@@ -1,9 +1,10 @@
 import axios from "axios";
 import { Page } from "./page";
-import { GrowiInitParams, HttpMethod } from "./types/client";
+import { GrowiInitParams, HttpMethod, SearchParams, SearchResult, SearchResultResponse } from "./types/client";
 import { PagePamams } from "./types/page";
 import { User } from "./user";
 import { Revision } from "./revision";
+import { Comment } from "./comment";
 
 class GROWI {
 	private _apiToken?: string;
@@ -12,6 +13,7 @@ class GROWI {
 	Page = Page;
 	User = User;
 	Revision = Revision;
+	Comment = Comment;
 
 	/**
 	 * Constructor
@@ -22,13 +24,25 @@ class GROWI {
 		this._url = params.url || 'http://localhost:3000'
 		this._path = params.path || '';
 		Page.client = this;
+		Comment.client = this;
+		User.client = this;
 	}
 
 	async root(): Promise<Page> {
-		const json = await this.request('GET', '/_api/v3/page-listing/root') as {
-			rootPage: PagePamams,
+		const { page } = await this.request('GET', '/_api/v3/page-listing/root') as { page: PagePamams }
+		return new Page(page);
+	}
+
+	async page(params: {pageId?: string, path?: string}): Promise<Page> {
+		const json = await this.request('GET', '/_api/v3/page', params) as {
+			page: PagePamams,
 		};
-		return new Page(json.rootPage);
+		return new Page(json.page);
+	}
+
+	async search(params: SearchParams): Promise<SearchResult> {
+		const { meta, data } = await this.request('GET', '/_api/search', params) as SearchResultResponse;
+		return {...meta, pages: data.map((d) => new Page(d.data))};
 	}
 
 	async request(
@@ -103,4 +117,4 @@ class GROWI {
 	}
 }
 
-export { GROWI, Page };
+export { GROWI, Page, Comment, Revision, User };

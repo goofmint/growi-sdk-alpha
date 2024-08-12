@@ -45,6 +45,7 @@ describe('Page', () => {
     expect(page.path).toBe('/');
     expect(page.id).toBeDefined();
     const pages = await page.children();
+    console.log(pages[1]);
     const content = await pages[0].contents();
     expect(typeof content).toBe('string');
     expect(content.length).toBeGreaterThan(0);
