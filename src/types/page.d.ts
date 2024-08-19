@@ -1,25 +1,25 @@
 import { UserParams } from './user';
 
 export interface PagePamams {
-  _id: string;
-  parent: string | Page | null;
-  descendantCount: number;
-  isEmpty: boolean;
-  status: string;
-  grant: number;
-  grantedUsers: string[] | UserParams[];
-  liker: string[] | UserParams[];
-  seenUsers: string[] | UserParams[];
-  commentCount: number;
-  grantedGroups: any[];
-  updatedAt: string;
-  path: string;
-  createdAt: string;
-  __v: number;
-  lastUpdateUser: string | UserParams;
-  latestRevisionBodyLength: number;
-  revision: string | Revision;
-  id: string;
+  _id?: string;
+  parent?: string | Page;
+  descendantCount?: number;
+  isEmpty?: boolean;
+  status?: string;
+  grant?: number;
+  grantedUsers?: string[] | UserParams[];
+  liker?: string[] | UserParams[];
+  seenUsers?: string[] | UserParams[];
+  commentCount?: number;
+  grantedGroups?: any[];
+  updatedAt?: string;
+  path?: string;
+  createdAt?: string;
+  __v?: number;
+  lastUpdateUser?: string | UserParams;
+  latestRevisionBodyLength?: number;
+  revision?: string | Revision;
+  id?: string;
 	seenUserCount?: number;
 }
 

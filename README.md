@@ -135,6 +135,42 @@ result.took // time taken for search
 result.hitsCount // number of hits
 ```
 
+## Attachment
+
+### Upload an attachment
+
+```javascript
+const page = await growi.page({path: '/API Test'});
+const fileName = 'logo.png';
+const attachment = await page.upload(path.resolve("jest", fileName));
+attachment // Attachment instance
+```
+
+### Get attachments of a page
+
+```javascript
+const page = await growi.page({path: '/API Test'});
+const res = await Attachment.list(page);
+res.attachments // array of Attachment instances
+res.limit // 10
+res.page // 1
+res.totalDocs // 20
+```
+
+### Check uploadable file size
+
+```javascript
+const bol = await Attachment.limit(1024 * 1024 * 10);
+bol // true
+```
+
+### Find attachment
+
+```javascript
+const a = await Attachment.find(attachment.id!);
+a // Attachment instance
+```
+
 ## License
 
 MIT

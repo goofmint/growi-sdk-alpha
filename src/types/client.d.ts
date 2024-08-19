@@ -1,4 +1,6 @@
 import { PagePamams } from "./page";
+import { UserParams } from "./user";
+import { AttachmentParams } from "./attachment";
 
 export interface GrowiInitParams {
 	apiToken: string;

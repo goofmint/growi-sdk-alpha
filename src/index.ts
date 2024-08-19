@@ -5,6 +5,10 @@ import { PagePamams } from "./types/page";
 import { User } from "./user";
 import { Revision } from "./revision";
 import { Comment } from "./comment";
+import { Attachment } from "./attachment";
+import { Blob } from 'buffer';
+import fs from 'fs';
+import path from 'path';
 
 class GROWI {
 	private _apiToken?: string;
@@ -26,6 +30,7 @@ class GROWI {
 		Page.client = this;
 		Comment.client = this;
 		User.client = this;
+		Attachment.client = this;
 	}
 
 	async root(): Promise<Page> {
@@ -53,7 +58,7 @@ class GROWI {
 		method: HttpMethod,
 		path: string,
 		queries: {[key: string]: any} = {},
-		body: {[key: string]: any} = {}
+		body: {[key: string]: any} | FormData = {}
 	): Promise<any> {
 		const url = `${this._url}${this._path}${path}`;
 		const params = queries || {};
@@ -84,19 +89,19 @@ class GROWI {
 		return response.data;
 	}
 
-	async post(url: string, params: {[key: string]: any}, body: {[key: string]: any}): Promise<any> {
-		const headers = {
+	async post(url: string, params: {[key: string]: any}, body: {[key: string]: any} | FormData): Promise<any> {
+		const headers = body instanceof FormData ? {} : {
 			'Accept': 'application/json',
 		};
 		const u = `${url}?access_token=${encodeURIComponent(params.access_token)}`;
-		const response = await axios.post(u, body);
+		const response = await axios.post(u, body, { headers });
 		if (response.status !== 201 && response.status !== 200) {
 			throw new Error(`Failed to post request: ${response.statusText}`);
 		}
 		return response.data;
 	}
 
-	async put(url: string, params: {[key: string]: any}, body: {[key: string]: any}): Promise<any> {
+	async put(url: string, params: {[key: string]: any}, body: {[key: string]: any} | FormData): Promise<any> {
 		const headers = {
 			'Accept': 'application/json',
 		};
@@ -121,4 +126,4 @@ class GROWI {
 	}
 }
 
-export { GROWI, Page, Comment, Revision, User };
+export { GROWI, Page, Comment, Revision, User, Attachment };

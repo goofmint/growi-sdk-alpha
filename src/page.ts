@@ -1,4 +1,4 @@
-import { GROWI } from ".";
+import { Attachment, GROWI } from ".";
 import { Revision } from "./revision";
 import { GetPageCommentsResponse } from "./types/comment";
 import { PagePamams, PageTagResponse, createPageParams, removePageParams, removePageRequest, removePageResponse, updatePageParams, updatePageRequest } from "./types/page";
@@ -6,6 +6,8 @@ import { RevisionParams } from "./types/revision";
 import { User } from "./user";
 import { Comment } from "./comment";
 import { UpdatePageTagResponse } from "./types/tag";
+import fs from 'fs';
+import path from 'path';
 
 const PageGrant = {
 	public: 1,
@@ -340,6 +342,15 @@ class Page {
 
 	comment(): Comment {
 		return new Comment({ page: this });
+	}
+
+	async upload(filePath: string | Buffer, fileName?: string): Promise<Attachment> {
+		if (typeof filePath === 'string' && !fs.existsSync(filePath)) throw new Error('File not found');
+		if (filePath instanceof Buffer && !fileName) throw new Error('File name is required');
+		const f = typeof filePath === 'string' ? fs.readFileSync(filePath) : filePath;
+		const attachment = await Attachment.upload(this, f, fileName || path.basename(filePath as string));
+		attachment.page = this;
+		return attachment;
 	}
 }
 
