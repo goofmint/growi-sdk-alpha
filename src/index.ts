@@ -9,6 +9,8 @@ import { Attachment } from "./attachment";
 import { Blob } from 'buffer';
 import fs from 'fs';
 import path from 'path';
+import { UserGroup } from "./userGroup";
+import { GroupsParams, UserGroupRootResponse } from "./types/userGroup";
 
 class GROWI {
 	private _apiToken?: string;
@@ -31,6 +33,7 @@ class GROWI {
 		Comment.client = this;
 		User.client = this;
 		Attachment.client = this;
+		UserGroup.client = this;
 	}
 
 	async root(): Promise<Page> {
@@ -43,6 +46,10 @@ class GROWI {
 			page: PagePamams,
 		};
 		return new Page(json.page);
+	}
+
+	async groups(params: GroupsParams = {pagination: false}): Promise<UserGroupRootResponse> {
+		return UserGroup.root(params);
 	}
 
 	async search(params: SearchParams): Promise<SearchResult> {
@@ -117,8 +124,7 @@ class GROWI {
 		const headers = {
 			'Accept': 'application/json',
 		};
-		const u = `${url}?access_token=${encodeURIComponent(params.access_token)}`;
-		const response = await axios.delete(u, body);
+		const response = await axios.delete(url, { params, headers });
 		if (response.status !== 200) {
 			throw new Error(`Failed to delete request: ${response.statusText}`);
 		}
@@ -126,4 +132,4 @@ class GROWI {
 	}
 }
 
-export { GROWI, Page, Comment, Revision, User, Attachment };
+export { GROWI, Page, Comment, Revision, User, Attachment, UserGroup };
