@@ -1,11 +1,12 @@
 import axios from "axios";
 import { Page } from "./page";
 import { GrowiInitParams, HttpMethod, SearchParams, SearchResult, SearchResultResponse } from "./types/client";
-import { PagePamams } from "./types/page";
+import { PageParams } from "./types/page";
 import { User } from "./user";
 import { Revision } from "./revision";
 import { Comment } from "./comment";
 import { Attachment } from "./attachment";
+import { BookmarkFolder } from "./bookmarkFolder";
 import { Blob } from 'buffer';
 import fs from 'fs';
 import path from 'path';
@@ -20,6 +21,7 @@ class GROWI {
 	User = User;
 	Revision = Revision;
 	Comment = Comment;
+	_currentUser?: User;
 
 	/**
 	 * Constructor
@@ -34,18 +36,29 @@ class GROWI {
 		User.client = this;
 		Attachment.client = this;
 		UserGroup.client = this;
+		BookmarkFolder.client = this;
 	}
 
 	async root(): Promise<Page> {
-		const { page } = await this.request('GET', '/_api/v3/page-listing/root') as { page: PagePamams }
+		const { page } = await this.request('GET', '/_api/v3/page-listing/root') as { page: PageParams }
 		return new Page(page);
 	}
 
 	async page(params: {pageId?: string, path?: string}): Promise<Page> {
 		const json = await this.request('GET', '/_api/v3/page', params) as {
-			page: PagePamams,
+			page: PageParams,
 		};
 		return new Page(json.page);
+	}
+
+	async currentUser(): Promise<User> {
+		if (!this._currentUser) {
+			this._currentUser = await this.User.me();
+		}
+		if (!this._currentUser) {
+			throw new Error('Failed to get current user');
+		}
+		return this._currentUser;
 	}
 
 	async groups(params: GroupsParams = {pagination: false}): Promise<UserGroupRootResponse> {
@@ -132,4 +145,13 @@ class GROWI {
 	}
 }
 
-export { GROWI, Page, Comment, Revision, User, Attachment, UserGroup };
+export {
+	GROWI,
+	Page,
+	Comment,
+	Revision,
+	User,
+	Attachment,
+	UserGroup,
+	BookmarkFolder,
+};

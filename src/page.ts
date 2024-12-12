@@ -1,7 +1,7 @@
 import { Attachment, GROWI } from ".";
 import { Revision } from "./revision";
 import { GetPageCommentsResponse } from "./types/comment";
-import { PagePamams, PageTagResponse, createPageParams, removePageParams, removePageRequest, removePageResponse, updatePageParams, updatePageRequest } from "./types/page";
+import { PageParams, PageTagResponse, createPageParams, removePageParams, removePageRequest, removePageResponse, updatePageParams, updatePageRequest } from "./types/page";
 import { RevisionParams } from "./types/revision";
 import { User } from "./user";
 import { Comment } from "./comment";
@@ -53,7 +53,7 @@ class Page {
 	 * @param data 
 	 * @returns 
 	 */
-	constructor(data?: PagePamams) {
+	constructor(data?: PageParams) {
 		if (!data) return;
 		this.sets(data);
 	}
@@ -62,7 +62,7 @@ class Page {
 	 * Set page's properties
 	 * @param data 
 	 */
-	sets(data: PagePamams): Page {
+	sets(data: PageParams): Page {
 		Object.entries(data).forEach(([key, value]) => {
 			this.set(key, value);
 		});
@@ -195,7 +195,7 @@ class Page {
 		const json = await Page.client.request('GET', '/_api/v3/page-listing/children', {
 			id: this.id,
 		}) as {
-			children: PagePamams[],
+			children: PageParams[],
 		};
 		if (!json.children) throw new Error('Failed to get children pages');
 		return json.children.map((data) => new Page({...data, parent: this}));
@@ -209,7 +209,7 @@ class Page {
 		const { page } = await Page.client.request('GET', '/_api/v3/page', {
 			pageId: this.id,
 		}) as {
-			page: PagePamams,
+			page: PageParams,
 		};
 		if (!page) return false;
 		this.sets(page);
@@ -239,7 +239,7 @@ class Page {
 			grant: params.grant || PageGrant.public,
 			body: params.body || '',
 		}) as {
-			page: PagePamams,
+			page: PageParams,
 			revision: RevisionParams,
 			tags: string[],
 		}
@@ -270,7 +270,7 @@ class Page {
 		if (params.origin) body.origin = params.origin;
 		if (params.wip) body.wip = params.wip;
 		const { page } = await Page.client.request('PUT', '/_api/v3/page', {}, body) as {
-			page: PagePamams,
+			page: PageParams,
 		}
 		this.sets(page);
 		return true;
