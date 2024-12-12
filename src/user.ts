@@ -1,4 +1,4 @@
-import { GROWI } from ".";
+import { BookmarkFolder, GROWI } from ".";
 import { UserParams } from "./types/user";
 
 class User {
@@ -17,7 +17,13 @@ class User {
 	updatedAt?: Date;
 	imageUrlCached?: string;
 	isQuestionnaireEnabled?: boolean;
+	readonly?: boolean;
+	isInvitationEmailSended?: boolean;
+	version?: number;
+	lastLoginAt?: Date;
 
+	_bookmarkFolders: BookmarkFolder[] = [];
+	
 	/**
 	 * Constructor
 	 * @param data 
@@ -89,10 +95,39 @@ class User {
 			case 'isQuestionnaireEnabled':
 				this.isQuestionnaireEnabled = value as boolean;
 				break;
+			case 'readonly':
+				this.readonly = value as boolean;
+				break;
+			case 'isInvitationEmailSended':
+				this.isInvitationEmailSended = value as boolean;
+				break;
+			case '__v':
+				this.version = value as number;
+				break;
+			case 'lastLoginAt':
+				this.lastLoginAt = new Date(value as string);
+				break;
+			case 'apiToken':
+				break;
 			default:
 				throw new Error(`Unknown key in user: ${key} ${value}`);
 		}
 		return this;
+	}
+
+	static async me(): Promise<User> {
+		const { currentUser } = await this.client.request('GET', '/_api/v3/personal-setting') as { currentUser: UserParams };
+		return new User(currentUser);
+	}
+
+	async bookmarkFolders(): Promise<BookmarkFolder[]> {
+		if (!this.id) {
+			throw new Error('User id is required');
+		}
+		if (this._bookmarkFolders.length === 0) {
+			this._bookmarkFolders = await BookmarkFolder.all(this.id);
+		}
+		return this._bookmarkFolders;
 	}
 }
 

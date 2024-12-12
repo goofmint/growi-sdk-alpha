@@ -1,6 +1,6 @@
 import { UserParams } from './user';
 
-export interface PagePamams {
+export interface PageParams {
   _id?: string;
   parent?: string | Page;
   descendantCount?: number;
