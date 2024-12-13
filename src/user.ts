@@ -1,4 +1,5 @@
-import { BookmarkFolder, GROWI } from ".";
+import { BookmarkFolder, GROWI, Page } from ".";
+import { UserBookmarks } from "./types/bookmark";
 import { UserParams } from "./types/user";
 
 class User {
@@ -23,6 +24,7 @@ class User {
 	lastLoginAt?: Date;
 
 	_bookmarkFolders: BookmarkFolder[] = [];
+	_bookmarks: Page[] = [];
 	
 	/**
 	 * Constructor
@@ -118,6 +120,29 @@ class User {
 	static async me(): Promise<User> {
 		const { currentUser } = await this.client.request('GET', '/_api/v3/personal-setting') as { currentUser: UserParams };
 		return new User(currentUser);
+	}
+
+	async bookmarks(): Promise<Page[]> {
+		if (!this.id) throw new Error('User id is required');
+		const { userRootBookmarks: bookmarks } = await User.client.request('GET', `/_api/v3/bookmarks/${this.id}`) as UserBookmarks;
+		this._bookmarks = bookmarks.map((bookmark) => new Page(bookmark.page));
+		return this._bookmarks;
+	}
+
+	async bookmark(page: Page, bool: boolean = true): Promise<boolean> {
+		if (!this.id) throw new Error('User id is required');
+		if (!page.id) throw new Error('Page id is required');
+		await User.client.request('PUT', '/_api/v3/bookmarks', {}, {
+			pageId: page.id,
+			bool,
+		});
+		return true;
+	}
+
+	async isBookmarked(page: Page): Promise<boolean> {
+		if (!this.id) throw new Error('User id is required');
+		if (!page.id) throw new Error('Page id is required');
+		return page.bookmarked();
 	}
 
 	async bookmarkFolders(): Promise<BookmarkFolder[]> {

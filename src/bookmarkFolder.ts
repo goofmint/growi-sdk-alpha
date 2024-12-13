@@ -1,4 +1,5 @@
 import { GROWI, Page, User } from ".";
+import { BookmarkParams } from "./types/bookmark";
 import { BookmarkFolderParams, BookmarkFolderUpdateParams } from "./types/bookmarkFolder";
 import { PageParams } from "./types/page";
 
@@ -61,7 +62,9 @@ class BookmarkFolder {
         if (value instanceof Page) {
           this.bookmarks = [value];
         } else if (value instanceof Array) {
-          this.bookmarks = (value as PageParams[]).map((bookmark) => new Page(bookmark));
+          this.bookmarks = (value as BookmarkParams[]).map((bookmark) => {
+            return new Page(bookmark.page);
+          });
         }
         break;
       case 'childFolder':
@@ -84,7 +87,29 @@ class BookmarkFolder {
     return bookmarkFolderItems.map((folder) => new BookmarkFolder(folder));
   }
 
-  save(): Promise<boolean> {
+  find(id: string): BookmarkFolder | undefined {
+    if (this.id === id) return this;
+    for (const folder of (this.childFolders || [])) {
+      const found = folder.find(id);
+      if (found) return found;
+    }
+    return;
+  }
+
+  async fetch(): Promise<boolean> {
+    if (!this.id) return true;
+    const folders = await BookmarkFolder.all(this.owner?.id || '');
+    for (const f of folders) {
+      const folder = f.find(this.id);
+      if (folder) {
+        this.sets(folder.toParams());
+        return true;
+      }
+    };
+    return false;
+  }
+
+  async save(): Promise<boolean> {
     if (this.id) {
       return this.update();
     } else {
@@ -105,6 +130,7 @@ class BookmarkFolder {
   }
 
   async update(): Promise<boolean> {
+    if (this.parent && !this.parent.id) await this.parent?.save();
     const { bookmarkFolder } = await BookmarkFolder.client.request('PUT', '/_api/v3/bookmark-folder', {}, this.toJson()) as {
       bookmarkFolder: BookmarkFolderParams,
     }
@@ -112,7 +138,7 @@ class BookmarkFolder {
     return true;
   }
 
-  async delete(): Promise<boolean> {
+  async remove(): Promise<boolean> {
     if (!this.id) return false;
     const { deletedCount } = await BookmarkFolder.client.request('DELETE', `/_api/v3/bookmark-folder/${this.id}`) as { deletedCount: number };
     return deletedCount > 0;
@@ -128,6 +154,17 @@ class BookmarkFolder {
     return true;
   }
 
+  async addPage(page: Page): Promise<boolean> {
+    if (!page.id) throw new Error('Page ID is not defined');
+    if (!this.id) await this.save();
+    const { bookmarkFolder } = await BookmarkFolder.client.request('POST', '/_api/v3/bookmark-folder/add-boookmark-to-folder', {}, {
+      pageId: page.id,
+      folderId: this.id,
+    }) as { bookmarkFolder: BookmarkFolderParams };
+    this.sets(bookmarkFolder);
+    return true;
+  }
+
   toJson(): BookmarkFolderUpdateParams {
     if (!this.id) throw new Error('BookmarkFolder ID is not defined');
     if (!this.name) throw new Error('BookmarkFolder name is not defined');
@@ -136,6 +173,18 @@ class BookmarkFolder {
       name: this.name,
       childFolder: [],
       parent: this.parent?.id || '',
+    }
+  }
+
+  toParams(): BookmarkFolderParams {
+    return {
+      _id: this.id!,
+      name: this.name!,
+      owner: this.owner?.id || '',
+      bookmarks: [],
+      childFolder: this.childFolders.map((folder) => folder.toParams()),
+      parent: this.parent?.id || '',
+      __v: this.version!,
     }
   }
 }

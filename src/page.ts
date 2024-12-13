@@ -8,6 +8,7 @@ import { Comment } from "./comment";
 import { UpdatePageTagResponse } from "./types/tag";
 import fs from 'fs';
 import path from 'path';
+import { BookmarkInfo } from "./types/bookmark";
 
 const PageGrant = {
 	public: 1,
@@ -16,6 +17,12 @@ const PageGrant = {
 	owner: 4,
 	userGroup: 5,
 } as const;
+
+interface PageBookmarkInfo {
+	bookmarkCount: number;
+	users: User[];
+	bookmarked: boolean;
+}
 
 class Page {
 	static client: GROWI;
@@ -47,6 +54,7 @@ class Page {
 	_comments?: Comment[];
 	body?: string;
 	seenUserCount?: number;
+	_bookmarkInfo?: PageBookmarkInfo;
 
 	/**
 	 * Constructor
@@ -331,6 +339,35 @@ class Page {
 
 	async removeTag(text: string): Promise<string[]> {
 		return this.updateTag('remove', text);
+	}
+
+	async bookmarkInfo(): Promise<PageBookmarkInfo> {
+		if (!this.id) throw new Error('Page ID is not defined');
+		const res = await Page.client.request('GET', '/_api/v3/bookmarks/info', { pageId: this.id }) as BookmarkInfo;
+		this._bookmarkInfo = {
+			bookmarkCount: res.sumOfBookmarks,
+			users: res.bookmarkedUsers.map((user) => new User(user)),
+			bookmarked: res.isBookmarked,
+		}
+		return this._bookmarkInfo;
+	}
+
+	async bookmarked(): Promise<boolean> {
+		if (!this.id) throw new Error('Page ID is not defined');
+		if (!this._bookmarkInfo) await this.bookmarkInfo();
+		return this._bookmarkInfo?.bookmarked || false;
+	}
+
+	async bookmarkCount(): Promise<number> {
+		if (!this.id) throw new Error('Page ID is not defined');
+		if (!this._bookmarkInfo) await this.bookmarkInfo();
+		return this._bookmarkInfo?.bookmarkCount || 0;
+	}
+
+	async bookmarkUsers(): Promise<User[]> {
+		if (!this.id) throw new Error('Page ID is not defined');
+		if (!this._bookmarkInfo) await this.bookmarkInfo();
+		return this._bookmarkInfo?.users || [];
 	}
 
 	async comments(): Promise<Comment[]> {

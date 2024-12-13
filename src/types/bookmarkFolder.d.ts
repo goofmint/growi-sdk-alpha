@@ -6,9 +6,9 @@ export interface BookmarkFolderParams {
   name: string,
   owner: string,
   __v: number,
-  bookmarks: PagePamams[],
-  childFolder: BookmarkFolderParams[],
-  parent: string | null,
+  bookmarks: PagePamams[] | string[],
+  childFolder?: BookmarkFolderParams[],
+  parent?: string | null,
 }
 
 export interface BookmarkFolderUpdateParams {
