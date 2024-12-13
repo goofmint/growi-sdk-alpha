@@ -171,6 +171,126 @@ const a = await Attachment.find(attachment.id!);
 a // Attachment instance
 ```
 
+## User
+
+### Get current user
+
+```javascript
+const user = await growi.currentUser();
+```
+
+## Bookmark Folder
+
+### Get bookmark folders
+
+```javascript
+const bookmarkFolders = await user.bookmarkFolders();
+```
+
+### Create a bookmark folder
+
+```javascript
+const bookmarkFolder = new BookmarkFolder();
+bookmarkFolder.name = 'my folder';
+await bookmarkFolder.save();
+```
+
+### Update a bookmark folder
+
+```javascript
+bookmarkFolder.name = 'my folder updated';
+await bookmarkFolder.save();
+```
+
+### Remove a bookmark folder
+
+```javascript
+await bookmarkFolder.remove();
+```
+
+### Create a bookmark folder in a folder
+
+```javascript
+const bookmarkFolder = new BookmarkFolder();
+bookmarkFolder.name = 'Parent';
+await bookmarkFolder.save();
+expect(bookmarkFolder.id !== '').toBeTruthy();
+const bookmarkFolder2 = new BookmarkFolder();
+bookmarkFolder2.name = 'Child';
+bookmarkFolder2.parent = bookmarkFolder;
+await bookmarkFolder2.save();
+```
+
+Or
+
+```javascript
+const bookmarkFolder = new BookmarkFolder();
+bookmarkFolder.name = 'Parent';
+const bookmarkFolder2 = new BookmarkFolder();
+bookmarkFolder2.name = 'Child';
+await bookmarkFolder.addFolder(bookmarkFolder2);
+```
+
+### Move a bookmark folder
+
+```javascript
+const bookmarkFolder3 = new BookmarkFolder();
+bookmarkFolder3.name = 'New parent';
+bookmarkFolder3.parent = bookmarkFolder2;
+await bookmarkFolder3.save();
+```
+
+### Fetch folder info
+
+```javascript
+await bookmarkFolder.fetch();
+```
+
+## Bookmark
+
+### Get my bookmarks
+
+```javascript
+const bookmarks = await user.bookmarks();
+```
+
+### Get bookmark info of a page
+
+```javascript
+const page = await growi.root();
+const info = await page.bookmarkInfo();
+info.bookmarkCount // number of bookmarks
+info.bookmarked    // true if the page is bookmarked by the current user
+info.users         // array of users who bookmarked the page
+```
+
+### Bookmark a page
+
+```javascript
+await user.bookmark(page); // unbookmark
+```
+
+### Unbookmark a page
+
+```javascript
+await user.bookmark(page, false); // unbookmark
+```
+
+### Check if a page is bookmarked
+
+```javascript
+const bol = await user.isBookmarked(page);
+```
+
+### Add bookmark to a folder
+
+```javascript
+const folder = new BookmarkFolder();
+folder.name = 'my folder';
+await folder.save();
+await folder.addPage(page);
+```
+
 ## License
 
 MIT
