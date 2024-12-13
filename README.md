@@ -214,7 +214,6 @@ await bookmarkFolder.remove();
 const bookmarkFolder = new BookmarkFolder();
 bookmarkFolder.name = 'Parent';
 await bookmarkFolder.save();
-expect(bookmarkFolder.id !== '').toBeTruthy();
 const bookmarkFolder2 = new BookmarkFolder();
 bookmarkFolder2.name = 'Child';
 bookmarkFolder2.parent = bookmarkFolder;
