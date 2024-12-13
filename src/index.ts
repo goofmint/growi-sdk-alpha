@@ -40,7 +40,7 @@ class GROWI {
 	}
 
 	async root(): Promise<Page> {
-		const { page } = await this.request('GET', '/_api/v3/page-listing/root') as { page: PageParams }
+		const {rootPage: page} = await this.request('GET', '/_api/v3/page-listing/root') as { rootPage: PageParams }
 		return new Page(page);
 	}
 
