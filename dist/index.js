@@ -124,7 +124,7 @@ class GROWI {
             const headers = body instanceof FormData ? {} : {
                 'Accept': 'application/json',
             };
-            const u = `${url}?access_token=${encodeURIComponent(params.access_token)}`;
+            const u = params.access_token ? `${url}?access_token=${encodeURIComponent(params.access_token)}` : url;
             const response = yield axios_1.default.post(u, body, { headers });
             if (response.status !== 201 && response.status !== 200) {
                 throw new Error(`Failed to post request: ${response.statusText}`);
