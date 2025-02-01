@@ -8,17 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Page = void 0;
 const _1 = require(".");
 const revision_1 = require("./revision");
 const user_1 = require("./user");
 const comment_1 = require("./comment");
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
 const PageGrant = {
     public: 1,
     restricted: 2,
@@ -399,14 +394,13 @@ class Page {
     comment() {
         return new comment_1.Comment({ page: this });
     }
-    upload(filePath, fileName) {
+    upload(fileName, file) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (typeof filePath === 'string' && !fs_1.default.existsSync(filePath))
-                throw new Error('File not found');
-            if (filePath instanceof Buffer && !fileName)
+            if (!fileName || fileName === '')
                 throw new Error('File name is required');
-            const f = typeof filePath === 'string' ? fs_1.default.readFileSync(filePath) : filePath;
-            const attachment = yield _1.Attachment.upload(this, f, fileName || path_1.default.basename(filePath));
+            if (!file || file.length === 0)
+                throw new Error('File is required');
+            const attachment = yield _1.Attachment.upload(this, file, fileName);
             attachment.page = this;
             return attachment;
         });

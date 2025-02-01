@@ -3,6 +3,7 @@ import { GROWI, Attachment } from "../src";
 import config from './config.json';
 import {describe, expect, test} from '@jest/globals';
 import path from 'path';
+import fs from 'fs';
 
 const growi = new GROWI(config);
 
@@ -10,7 +11,8 @@ describe('Attachment', () => {
   test('Upload file', async () => {
 		const page = await growi.page({path: '/API Test'});
 		const fileName = 'logo.png';
-		const attachment = await page.upload(path.resolve("jest", fileName));
+		const file = fs.readFileSync(path.resolve("jest", fileName));
+		const attachment = await page.upload(fileName, file);
 		expect(attachment.fileName).toBeDefined();
 		expect(attachment.originalName).toBe(fileName);
 		expect(attachment.creator).toBeInstanceOf(growi.User);

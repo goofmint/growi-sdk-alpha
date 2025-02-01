@@ -1,6 +1,5 @@
 import { GROWI, Page, User } from ".";
 import { AttachmentParams, ListAttachmentResponse, ListAttachmentsResult, PostAttachmentResponse } from "./types/attachment";
-import { Blob } from 'buffer';
 import FormData from 'form-data';
 
 class Attachment {

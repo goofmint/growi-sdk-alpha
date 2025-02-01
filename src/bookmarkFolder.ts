@@ -1,7 +1,6 @@
 import { GROWI, Page, User } from ".";
 import { BookmarkParams } from "./types/bookmark";
 import { BookmarkFolderParams, BookmarkFolderUpdateParams } from "./types/bookmarkFolder";
-import { PageParams } from "./types/page";
 
 class BookmarkFolder {
 	static client: GROWI;

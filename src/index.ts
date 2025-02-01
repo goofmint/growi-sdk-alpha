@@ -7,9 +7,6 @@ import { Revision } from "./revision";
 import { Comment } from "./comment";
 import { Attachment } from "./attachment";
 import { BookmarkFolder } from "./bookmarkFolder";
-import { Blob } from 'buffer';
-import fs from 'fs';
-import path from 'path';
 import { UserGroup } from "./userGroup";
 import { GroupsParams, UserGroupRootResponse } from "./types/userGroup";
 
