@@ -26,7 +26,8 @@ export interface PageParams {
 
 export interface createPageParams {
 	name: string;
-	grant?: Page.Grant;
+	grant?: number;
+	grantUserGroupIds?: string[];
 	body?: string;
 }
 
