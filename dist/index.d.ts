@@ -9,8 +9,8 @@ import { UserGroup } from "./userGroup";
 import { GroupsParams, UserGroupRootResponse } from "./types/userGroup";
 declare class GROWI {
     private _apiToken?;
-    private _url;
-    private _path;
+    private _url?;
+    private _path?;
     Page: typeof Page;
     User: typeof User;
     Revision: typeof Revision;
@@ -20,7 +20,7 @@ declare class GROWI {
      * Constructor
      * @param params GrowiInitParams
      */
-    constructor(params: GrowiInitParams);
+    constructor(params: GrowiInitParams | undefined);
     root(): Promise<Page>;
     page(params: {
         pageId?: string;

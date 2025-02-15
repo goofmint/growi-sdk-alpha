@@ -38,9 +38,15 @@ class GROWI {
         this.User = user_1.User;
         this.Revision = revision_1.Revision;
         this.Comment = comment_1.Comment;
-        this._apiToken = params.apiToken;
-        this._url = params.url || 'http://localhost:3000';
-        this._path = params.path || '';
+        if (params) {
+            this._apiToken = params.apiToken;
+            this._url = params.url || '';
+            this._path = params.path || '';
+        }
+        else {
+            this._url = '';
+            this._path = '';
+        }
         page_1.Page.client = this;
         comment_1.Comment.client = this;
         user_1.User.client = this;
