@@ -12,8 +12,8 @@ import { GroupsParams, UserGroupRootResponse } from "./types/userGroup";
 
 class GROWI {
 	private _apiToken?: string;
-	private _url: string;
-	private _path: string;
+	private _url?: string;
+	private _path?: string;
 	Page = Page;
 	User = User;
 	Revision = Revision;
@@ -24,10 +24,15 @@ class GROWI {
 	 * Constructor
 	 * @param params GrowiInitParams
 	 */
-	constructor(params: GrowiInitParams) {
-		this._apiToken = params.apiToken;
-		this._url = params.url || 'http://localhost:3000'
-		this._path = params.path || '';
+	constructor(params: GrowiInitParams | undefined) {
+		if (params) {
+			this._apiToken = params.apiToken;
+			this._url = params.url || ''
+			this._path = params.path || '';
+		} else {
+			this._url = '';
+			this._path = '';
+		}
 		Page.client = this;
 		Comment.client = this;
 		User.client = this;
