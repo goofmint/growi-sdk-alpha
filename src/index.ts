@@ -24,7 +24,7 @@ class GROWI {
 	 * Constructor
 	 * @param params GrowiInitParams
 	 */
-	constructor(params: GrowiInitParams | undefined) {
+	constructor(params?: GrowiInitParams) {
 		if (params) {
 			this._apiToken = params.apiToken;
 			this._url = params.url || ''
