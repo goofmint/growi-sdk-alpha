@@ -20,7 +20,7 @@ declare class GROWI {
      * Constructor
      * @param params GrowiInitParams
      */
-    constructor(params: GrowiInitParams | undefined);
+    constructor(params?: GrowiInitParams);
     root(): Promise<Page>;
     page(params: {
         pageId?: string;
